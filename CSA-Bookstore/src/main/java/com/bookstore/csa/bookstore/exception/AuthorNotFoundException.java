@@ -4,6 +4,7 @@
  */
 package com.bookstore.csa.bookstore.exception;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -21,6 +22,6 @@ public class AuthorNotFoundException extends RuntimeException{
      */
     public AuthorNotFoundException(String message){
         super(message);
-        LOGGER.warning("AuthorNotFoundException thrown: {0}" + message);
+        LOGGER.log(Level.WARNING, "AuthorNotFoundException thrown: '{'0'}'{0}", message);
     }
 }

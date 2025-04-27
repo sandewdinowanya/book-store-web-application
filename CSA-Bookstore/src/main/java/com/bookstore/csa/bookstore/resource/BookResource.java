@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -57,7 +58,7 @@ public class BookResource {
     @GET
     @Path("/{id}")
     public Book getBook(@PathParam("id")Long id){
-       LOGGER.info("Fetching book with ID: "+ id);
+       LOGGER.log(Level.INFO, "Fetching book with ID: {0}", id);
        Book book = database.getBookId(id);
        if(book == null){
            throw new BookNotFoundException("Book with ID " + id + " does not exist");
@@ -77,10 +78,10 @@ public class BookResource {
     //                .entity(createdBook)
     //                .build();
 
-    LOGGER.info("Creating a new book : " + book.getTitle());
+    LOGGER.log(Level.INFO, "Creating a new book : {0}", book.getTitle());
     // check if author exists
     if(book.getAuthorId() != null && !database.authorExists(book.getAuthorId())){
-        LOGGER.warning("Author with ID " + book.getAuthorId() + " not found during book creation");
+        LOGGER.log(Level.WARNING, "Author with ID {0} not found during book creation", book.getAuthorId());
         throw new AuthorNotFoundException("Author with ID " + book.getAuthorId() + " does not exist");
     }
     
@@ -102,7 +103,7 @@ public class BookResource {
         if(author != null){
             author.addBookId(createdBook.getId());
             database.updateAuthor(author);
-            LOGGER.info("Associated new book with author ID: " + book.getAuthorId());
+            LOGGER.log(Level.INFO, "Associated new book with author ID: {0}", book.getAuthorId());
         }
     }
     
@@ -120,25 +121,18 @@ public class BookResource {
     @PUT
     @Path("/{id}")
     public Book updateBook(@PathParam("id") Long id, Book book){
-        //        book.setId(id);
-        //        Book updatedBook = database.updateBook(book);
-        //        if(updatedBook == null){
-        //            throw new BookNotFoundException("Book with ID " + id + " does not exist");
-        //        }
-        //        return updatedBook;
-
-        LOGGER.warning("Book with ID : " + id + " not found for update");
+        LOGGER.log(Level.WARNING, "Book with ID : {0} not found for update", id);
         
         // check if book exists
         Book existingBook = database.getBookId(id);
         if(existingBook == null){
-            LOGGER.warning("Updating book with ID: " + id + "not found for update");
+            LOGGER.log(Level.WARNING, "Updating book with ID: {0}not found for update", id);
             throw new BookNotFoundException("Book with ID " + id + " does not exist");
         }
 
         // check if author exists
         if(book.getAuthorId() != null && !database.authorExists(book.getAuthorId())){
-            LOGGER.warning("Author with ID " + book.getAuthorId() + " not found during book update");
+            LOGGER.log(Level.WARNING, "Author with ID {0} not found during book update", book.getAuthorId());
             throw new AuthorNotFoundException("Author with ID " + book.getAuthorId() + " does not exist");
         }
 
@@ -149,7 +143,7 @@ public class BookResource {
             if(oldAuthor != null){
                 oldAuthor.removeBookId(id);
                 database.updateAuthor(oldAuthor);
-                LOGGER.info("Removed book ID " + id + " from old author ID " + existingBook.getAuthorId());
+                LOGGER.log(Level.INFO, "Removed book ID {0} from old author ID {1}", new Object[]{id, existingBook.getAuthorId()});
 
             }
 
@@ -159,7 +153,7 @@ public class BookResource {
                 if(newAuthor != null){
                     newAuthor.addBookId(id);
                     database.updateAuthor(newAuthor);
-                    LOGGER.info("Added book ID " + id + " to new author ID " + book.getAuthorId());
+                    LOGGER.log(Level.INFO, "Added book ID {0} to new author ID {1}", new Object[]{id, book.getAuthorId()});
                 }
             } 
         }
@@ -175,10 +169,10 @@ public class BookResource {
     @DELETE 
     @Path("/{id}")
     public Response deleteBook(@PathParam("id") Long id){
-        LOGGER.info("Deleting book with ID: " + id);
+        LOGGER.log(Level.INFO, "Deleting book with ID: {0}", id);
         boolean deleted = database.deleteBook(id);
         if(!deleted){
-            LOGGER.warning("Book with ID " + id + " not found dor deletion");
+            LOGGER.log(Level.WARNING, "Book with ID {0} not found dor deletion", id);
             throw new BookNotFoundException("Book with ID " + id + " does not exist");
         }
         return Response.status(Response.Status.NO_CONTENT).build();

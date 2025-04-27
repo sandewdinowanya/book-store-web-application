@@ -75,18 +75,18 @@ public class CustomerResource {
      */
     @POST
     public Response createCustomer(Customer customer){
-        LOGGER.info("Creating new customer: " + customer.getEmail());
+        LOGGER.log(Level.INFO, "Creating new customer: {0}", customer.getEmail());
         
         // validate input
         validateCustomer(customer);
         
         Customer createdCustomer = database.addCustomer(customer);
         if(createdCustomer == null){
-            LOGGER.info("Email already in use: " + customer.getEmail());
+            LOGGER.log(Level.INFO, "Email already in use: {0}", customer.getEmail());
             throw new InvalidInputException("Email already in use");
         }
         
-        LOGGER.warning("Customer created successfully with ID: " + createdCustomer.getId());
+        LOGGER.log(Level.WARNING, "Customer created successfully with ID: {0}", createdCustomer.getId());
         return Response.status(Response.Status.CREATED)
                 .entity(createdCustomer)
                 .build();
@@ -101,11 +101,11 @@ public class CustomerResource {
     @PUT
     @Path("/{id}")
     public Customer updateCustomer(@PathParam("id")Long id, Customer customer){
-        LOGGER.info("Updating customer with ID: " + id);
+        LOGGER.log(Level.INFO, "Updating customer with ID: {0}", id);
         
         // check if customer exists
         if(!database.customerExists(id)){
-            LOGGER.warning("Customer with ID " + id + " not found for update");
+            LOGGER.log(Level.WARNING, "Customer with ID {0} not found for update", id);
             throw new CustomerNotFoundException("Customer with ID " + id + " does not exist.");
         }
         
@@ -117,11 +117,11 @@ public class CustomerResource {
         
         Customer updatedCustomer = database.updateCustomer(customer);
         if(updatedCustomer == null){
-            LOGGER.warning("Email already in use by another customer: " + customer.getEmail());
+            LOGGER.log(Level.WARNING, "Email already in use by another customer: {0}", customer.getEmail());
             throw new InvalidInputException("Email already in use by another customer");
         }
         
-        LOGGER.info("Customer updates succefully with ID: " + id);
+        LOGGER.log(Level.INFO, "Customer updates succefully with ID: {0}", id);
         return updatedCustomer;
     }
     
@@ -133,15 +133,15 @@ public class CustomerResource {
     @DELETE
     @Path("/{id}")
     public Response deleteCustomer(@PathParam("id")Long id){
-        LOGGER.info("Deleting customer with ID: " + id);
+        LOGGER.log(Level.INFO, "Deleting customer with ID: {0}", id);
         
         boolean deleted = database.deleteCustomer(id);
         if(!deleted){
-            LOGGER.warning("Customer with ID " + id + " not found for deletion");
+            LOGGER.log(Level.WARNING, "Customer with ID {0} not found for deletion", id);
             throw new CustomerNotFoundException("Customer with ID " + id + " does not exist");
         }
         
-        LOGGER.info("Customer deleted successfully with ID: " + id);
+        LOGGER.log(Level.INFO, "Customer deleted successfully with ID: {0}", id);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
     

@@ -4,6 +4,7 @@
  */
 package com.bookstore.csa.bookstore.exception;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -20,6 +21,6 @@ public class BookNotFoundException extends RuntimeException{
      */
     public BookNotFoundException(String message){
         super(message);
-        LOGGER.warning("BookNotFoundException thrown : " + message);
+        LOGGER.log(Level.WARNING, "BookNotFoundException thrown : {0}", message);
     }
 }

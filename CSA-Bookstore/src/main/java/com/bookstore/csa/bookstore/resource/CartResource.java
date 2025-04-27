@@ -12,6 +12,7 @@ import com.bookstore.csa.bookstore.exception.OutOfStockException;
 import com.bookstore.csa.bookstore.model.Book;
 import com.bookstore.csa.bookstore.model.Cart;
 import com.bookstore.csa.bookstore.model.CartItem;
+import java.util.logging.Level;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -48,11 +49,11 @@ public class CartResource {
     @GET
     public Cart getCart(@PathParam("customerId") Long customerId){
         
-        LOGGER.info("Fetching cart for customer ID: " + customerId);
+        LOGGER.log(Level.INFO, "Fetching cart for customer ID: {0}", customerId);
 
         // check if customer exists
         if(!database.customerExists(customerId)){
-            LOGGER.warning("Cart not found for customer ID: " + customerId);
+            LOGGER.log(Level.WARNING, "Cart not found for customer ID: {0}", customerId);
             throw new CartNotFoundException("Cart for customer with ID " + customerId + " does not exist");
         }
         
@@ -60,7 +61,7 @@ public class CartResource {
         Cart cart = database.getCartByCustomerId(customerId);
         if(cart == null){
             cart = database.createCart(customerId);
-            LOGGER.info("New cart created for customer ID: " + customerId);
+            LOGGER.log(Level.INFO, "New cart created for customer ID: {0}", customerId);
         }
         
         return cart;
@@ -75,30 +76,30 @@ public class CartResource {
     @POST 
     @Path("/items")
     public Cart addToCart(@PathParam("customerId") Long customerId, CartItem item){
-        LOGGER.info("Adding item to cart for customer ID: " + customerId);
+        LOGGER.log(Level.INFO, "Adding item to cart for customer ID: {0}", customerId);
         // check if customer exists
         if(!database.customerExists(customerId)){
-            LOGGER.warning("Customer not found: "+ customerId);
+            LOGGER.log(Level.WARNING, "Customer not found: {0}", customerId);
             throw new CustomerNotFoundException("Customer with ID " + customerId + " does not exists");
         }
         
         // check if book exists
         Book book = database.getBookId(item.getBookId());
         if(book == null){
-            LOGGER.warning("Book not found: " + item.getBookId());
+            LOGGER.log(Level.WARNING, "Book not found: {0}", item.getBookId());
             throw new BookNotFoundException("Book with ID " + item.getBookId() + " does not exists");
         }
         
         // check quantity
         if(item.getQuantity() <=0 ){
-            LOGGER.warning("Invalid quantity for book ID: " + item.getBookId());
+            LOGGER.log(Level.WARNING, "Invalid quantity for book ID: {0}", item.getBookId());
             throw new OutOfStockException("Quantity must be greater than zero");
         }
         
         //Add to cart
         Cart updatedCart = database.addToCart(customerId,item);
         if(updatedCart == null){
-            LOGGER.warning("Not enough stock for book ID: " + item.getBookId());
+            LOGGER.log(Level.WARNING, "Not enough stock for book ID: {0}", item.getBookId());
             throw new OutOfStockException("Not enough stock available for book with ID " + item.getBookId() + " available books: " + book.getStock() + " ,requested quantity: " + item.getQuantity());
         }
         
@@ -124,27 +125,27 @@ public class CartResource {
         
         // check if customer exists
         if(!database.customerExists(customerId)){
-            LOGGER.warning("Customer not found: " + customerId);
+            LOGGER.log(Level.WARNING, "Customer not found: {0}", customerId);
             throw new CustomerNotFoundException("Customer with ID " + customerId + " does not exist");
         }
         
         // check if cart exists
         Cart cart = database.getCartByCustomerId(customerId);
         if(cart == null){
-            LOGGER.warning("Cart not found for customer ID: " + customerId);
+            LOGGER.log(Level.WARNING, "Cart not found for customer ID: {0}", customerId);
             throw new CartNotFoundException("Cart for customer with ID " + customerId + " does not exist");
         }
         
         // check if book exists
         Book book = database.getBookId(bookId);
         if(book == null){
-            LOGGER.warning("Book not found: " + bookId);
+            LOGGER.log(Level.WARNING, "Book not found: {0}", bookId);
             throw new BookNotFoundException("Book with ID " + bookId + " does not exist");
         }
         
         // check if book is in cart
         if(!cart.getItems().containsKey(bookId)){
-            LOGGER.warning("Book not found: " + bookId);
+            LOGGER.log(Level.WARNING, "Book not found: {0}", bookId);
             throw new BookNotFoundException("Book with ID " + bookId + " is not in the cart");
         }
         
@@ -178,7 +179,7 @@ public class CartResource {
                                 @PathParam("customerId") Long customerId,
                                 @PathParam("bookId") Long bookId){
             
-            LOGGER.info("Removing item from cart for customer ID: " + customerId + ", book ID: " + bookId);
+            LOGGER.log(Level.INFO, "Removing item from cart for customer ID: {0}, book ID: {1}", new Object[]{customerId, bookId});
             
             // check if cart exists
             if(!database.customerExists(customerId)){

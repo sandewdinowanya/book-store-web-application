@@ -4,6 +4,7 @@
  */
 package com.bookstore.csa.bookstore.exception;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -16,6 +17,6 @@ public class CustomerNotFoundException extends RuntimeException{
     
     public CustomerNotFoundException(String message){
         super(message);
-        LOGGER.warning("CustomerNotFoundException thrown: " + message);
+        LOGGER.log(Level.WARNING, "CustomerNotFoundException thrown: {0}", message);
     }
 }

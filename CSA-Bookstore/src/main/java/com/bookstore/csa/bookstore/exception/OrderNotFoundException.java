@@ -4,6 +4,7 @@
  */
 package com.bookstore.csa.bookstore.exception;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -15,6 +16,6 @@ public class OrderNotFoundException extends RuntimeException{
     
     public OrderNotFoundException(String message){
         super(message);
-        LOGGER.warning("OrderNotFoundException thrown: " + message);
+        LOGGER.log(Level.WARNING, "OrderNotFoundException thrown: {0}", message);
     }
 }
